@@ -1,0 +1,4 @@
+build/
+dist/
+fabdeploy.egg-info/
+*.pyc
