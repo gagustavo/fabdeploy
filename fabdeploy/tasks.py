@@ -100,5 +100,5 @@ class Deploy(RemoteTask):
 
     def update_app(self):
         for cmd in self.commands:
-            run('docker-compose -f {manifest} run web python manage.py {command}'.format(command=cmd, manifest=self.manifest))
+            run('docker-compose -f {manifest} run web {command}'.format(command=cmd, manifest=self.manifest))
         run('docker-compose -f {manifest} up -d'.format(manifest=self.manifest))
