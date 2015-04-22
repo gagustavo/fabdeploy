@@ -56,6 +56,7 @@ class Deploy(RemoteTask):
         'producao': 'origin/master',
         'homologacao': 'origin/homologacao',
     }
+    container = 'web'
 
     '''
     prefix = 'pj_'
@@ -100,5 +101,5 @@ class Deploy(RemoteTask):
 
     def update_app(self):
         for cmd in self.commands:
-            run('docker-compose -f {manifest} run web {command}'.format(command=cmd, manifest=self.manifest))
+            run('docker-compose -f {manifest} run {container} {command}'.format(command=cmd, container=self.container, manifest=self.manifest))
         run('docker-compose -f {manifest} up -d'.format(manifest=self.manifest))
