@@ -30,14 +30,13 @@ class CustomTask(Task):
 class RemoteTask(CustomTask):
 
     '''
-    base_dir = '/var/www/projeto.com.br/'
     remote_hosts = {
         'homologacao': 'usuario@homologacao.projeto.com.br',
         'producao': 'usuario@projeto.com.br',
     }
     '''
 
-    required_attributes = ('base_dir', 'remote_hosts')
+    required_attributes = ('remote_hosts',)
 
     def set_host(self, host):
         host_string = self.remote_hosts.get(host)
@@ -59,11 +58,12 @@ class Deploy(RemoteTask):
     container = 'web'
 
     '''
+    base_dir = '/var/www/projeto.com.br/'
     prefix = 'pj_'
     project_name = 'projeto'
     '''
 
-    required_attributes = ('prefix', 'project_name')
+    required_attributes = ('base_dir', 'prefix', 'project_name')
 
     def run(self, host=None, commit=None, build=False):
         self.set_host(host)
