@@ -103,3 +103,53 @@ class Deploy(RemoteTask):
         for cmd in self.commands:
             run('docker-compose -f {manifest} run {container} {command}'.format(command=cmd, container=self.container, manifest=self.manifest))
         run('docker-compose -f {manifest} up -d'.format(manifest=self.manifest))
+
+
+class DownloadDB(RemoteTask):
+
+    name = 'download_db'
+    usage = 'fab download_db:<host>'
+
+    commands = []
+    sql_file = '/tmp/dump.sql'
+    compressed_dump = sql_file + '.bz2'
+
+    '''
+    local_db = 'projeto_db'
+    project_name = 'projeto'
+    '''
+
+    required_attributes = ('local_db', 'project_name')
+
+    def run(self, host=None):
+        self.set_host(host)
+        self.dump_db(host)
+        self.compress_dump()
+        self.download_dump()
+        self.extract_dump()
+        self.import_dump()
+
+    def compress_dump(self):
+        run('pbzip2 -f {sql_file}'.format(sql_file=self.sql_file))
+
+    def download_dump(self):
+        get(self.compressed_dump, self.compressed_dump)
+
+    def dump_db(self, host):
+        run('pg_dump -U {project_name}_{host} -h postgresql.sisqualis.com.br --no-acl --no-owner {project_name}_{host} > {sql_file}'.format(
+                host=host,
+                project_name=self.project_name,
+                sql_file=self.sql_file
+            )
+        )
+
+    def extract_dump(self):
+        local('bunzip2 -f {compressed_dump}'.format(compressed_dump=self.compressed_dump))
+
+    def import_dump(self):
+        local('dropdb -U postgres {local_db}'.format(local_db=self.local_db))
+        local('createdb -U postgres {local_db}'.format(local_db=self.local_db))
+        local('psql -U postgres {local_db} -f {sql_file}'.format(local_db=self.local_db, sql_file=self.sql_file))
+
+        for cmd in self.commands:
+            local(cmd)
