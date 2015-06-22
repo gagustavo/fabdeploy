@@ -113,6 +113,7 @@ class DownloadDB(RemoteTask):
     commands = []
     sql_file = '/tmp/dump.sql'
     compressed_dump = sql_file + '.bz2'
+    db_host = 'postgresql.sisqualis.com.br'
 
     '''
     local_db = 'projeto_db'
@@ -136,10 +137,11 @@ class DownloadDB(RemoteTask):
         get(self.compressed_dump, self.compressed_dump)
 
     def dump_db(self, host):
-        run('pg_dump -U {project_name}_{host} -h postgresql.sisqualis.com.br --no-acl --no-owner {project_name}_{host} > {sql_file}'.format(
+        run('pg_dump -U {project_name}_{host} -h {db_host} --no-acl --no-owner {project_name}_{host} > {sql_file}'.format(
                 host=host,
                 project_name=self.project_name,
-                sql_file=self.sql_file
+                sql_file=self.sql_file,
+                db_host=self.db_host,
             )
         )
 
