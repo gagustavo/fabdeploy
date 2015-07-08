@@ -84,6 +84,10 @@ class Deploy(RemoteTask):
 
     def push_changes(self):
         local('git push ssh://{host}/~/{project_name}.git --all --force'.format(host=env.host_string, project_name=self.project_name))
+        self.push_tags(self)
+
+    def push_tags(self):
+        local('git push ssh://{host}/~/{project_name}.git --tags --force'.format(host=env.host_string, project_name=self.project_name))
 
     def save_state(self):
         try:
