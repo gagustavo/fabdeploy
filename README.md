@@ -4,5 +4,5 @@
 Para instalar use:
 
 ```
-pip install git+git@github.com:sisqualis/fabdeploy.git
+pip install -e git+git@github.com:sisqualis/fabdeploy.git#egg=fabdeploy
 ```
